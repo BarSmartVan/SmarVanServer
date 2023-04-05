@@ -1,0 +1,47 @@
+
+const { result } = require('underscore');
+
+const getDb = require('../database').getdb;
+
+
+class Van {
+    constructor(name, brand, model, plateNumber, ownerMail) {
+        this.name = name
+        this.brand = brand
+        this.model = model
+        this.plateNumber = plateNumber
+        this.ownerMail = ownerMail
+    }
+
+    save() {
+        const db = getDb();
+        db.collection('Van')
+        .insertOne(this)
+        .then(result => {
+            console.log(result)
+        }) 
+    }
+
+    static find(email) {
+        const db = getDb();
+        return db.collection('Van')
+        .find({ownerMail: email})
+        .toArray()
+        .then(vans => {
+            return vans;
+        })
+        .catch(err => console.log(err));    
+    }
+
+    static findByPlate(plateNumber) {
+        const db = getDb();
+        return db.collection('Van')
+        .find({plateNumber: plateNumber})
+        .toArray()
+        .then(vans => {
+            return vans;
+        })
+        .catch(err => console.log(err));    
+    }
+}
+module.exports = Van;

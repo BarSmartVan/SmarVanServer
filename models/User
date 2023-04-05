@@ -1,0 +1,33 @@
+const { result } = require('underscore');
+
+const getDb = require('../database').getdb;
+
+class User {
+    constructor(name, email, password) {
+        this.name = name
+        this.email = email
+        this.password = password
+    }
+
+    save() {
+        const db = getDb();
+        db.collection('User')
+        .insertOne(this)
+        .then(result => {
+            console.log(result)
+        })
+    }
+
+    static getUser(email) {
+        const db = getDb();
+        return db.collection('User')
+        .find({email: email})
+        .toArray()
+        .then(user => {
+            return user;
+        })
+        .catch(err => console.log(err));    
+    }
+}
+
+module.exports = User;
