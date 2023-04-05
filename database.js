@@ -2,9 +2,10 @@ const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 
 let _db;
+const url = 'mongodb+srv://tahamuhsinyilmaz:AqxRd5bu4he2mTAM@cluster0.hctcq8w.mongodb.net/SmartVan';
 
 const mongoConnect = (callback) => {
-    MongoClient.connect('mongodb://127.0.0.1/SmartVan')
+    MongoClient.connect(url)
     .then(client => {
         console.log('DB connected')
         _db = client.db();
