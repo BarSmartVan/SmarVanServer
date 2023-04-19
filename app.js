@@ -24,7 +24,7 @@ express.post('/login', (req, res)=>{
     User.getUser(email)
         .then (users => {
             if (users.length == 0) {
-                var response = new Response(400, "Wrong username or password")
+                var response = new Response(400, "Wrong email or password")
                 res.status(400).send(response);
             } else {
                 const user = users[0];
@@ -92,15 +92,45 @@ express.post('/createVan', (req, res)=>{
     Van.findByPlate(req.body.plateNumber) 
     .then (vans => {
         if (vans.length == 0) {
-            const van = new Van(req.body.name, req.body.brand, req.body.model, req.body.plateNumber, email);
-            van.save()
-            res.setHeader('content-type', 'application/json');
-            var response = new Response(200, "OK")
-            response['data'] = van;
-            res.send(response);
+            Van.findByProductionId(req.body.gatewayProductionId)
+            .then (vans => {
+                if (vans.length == 0) {
+                    const van = new Van(req.body.name, req.body.brand, req.body.model, req.body.plateNumber, email, req.body.gatewayProductionId);
+                    van.save()
+                    res.setHeader('content-type', 'application/json');
+                    var response = new Response(200, "OK")
+                    response['data'] = van;
+                    res.send(response);
+                } else {
+                    res.setHeader('content-type', 'application/json');
+                    var response = new Response(400, "Van already exists.")
+                    res.send(response);
+                }
+            });
+            
         } else {
             res.setHeader('content-type', 'application/json');
             var response = new Response(400, "Van already exists.")
+            res.send(response);
+        }
+    });
+    
+});
+
+express.post('/deleteVan', (req, res)=>{
+    const email = TokenParser.getEmail(req.headers.authorization)
+    Van.findByPlate(req.body.plateNumber) 
+    .then (vans => {
+        if (vans.length == 0) {
+            res.setHeader('content-type', 'application/json');
+            var response = new Response(400, "Requested van does not exist.")
+            res.send(response);
+        } else {
+            const van = vans[0];
+            Van.deleteVan(van)
+            res.setHeader('content-type', 'application/json');
+            var response = new Response(200, "OK")
+            response['data'] = "Van deleted";
             res.send(response);
         }
     });

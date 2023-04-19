@@ -5,12 +5,13 @@ const getDb = require('../database').getdb;
 
 
 class Van {
-    constructor(name, brand, model, plateNumber, ownerMail) {
+    constructor(name, brand, model, plateNumber, ownerMail, gatewayProductionId) {
         this.name = name
         this.brand = brand
         this.model = model
         this.plateNumber = plateNumber
         this.ownerMail = ownerMail
+        this.gatewayProductionId = gatewayProductionId
     }
 
     save() {
@@ -42,6 +43,26 @@ class Van {
             return vans;
         })
         .catch(err => console.log(err));    
+    }
+
+    static findByProductionId(gatewayProductionId) {
+        const db = getDb();
+        return db.collection('Van')
+        .find({gatewayProductionId: gatewayProductionId})
+        .toArray()
+        .then(vans => {
+            return vans;
+        })
+        .catch(err => console.log(err));    
+    }
+
+    static deleteVan(van) {
+        const db = getDb();
+        return db.collection('Van')
+        .deleteOne(van)
+        .then(result => {
+            console.log(result)
+        }) 
     }
 }
 module.exports = Van;
