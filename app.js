@@ -64,7 +64,7 @@ express.post('/register', (req, res)=>{
                     const user = new User(name, email, hashedPassword);
                     user.save();
                     var response = new Response(200, "OK")
-                    response['data'] = 'Success';
+                    response['data'] = 'Register completed successfully.';
                     res.send(response);
                 });
         } else {
